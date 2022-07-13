@@ -25,7 +25,7 @@ class CustomValueResult implements JsonSerializable
      *
      * @var string
      */
-    public $previousLabel;
+    public $previousLabel = '';
 
     /**
      * The metric value prefix.
@@ -39,7 +39,7 @@ class CustomValueResult implements JsonSerializable
      *
      * @var string
      */
-    public $suffix;
+    public $suffix = '';
 
     /**
      * Whether to run inflection on the suffix.
@@ -53,7 +53,7 @@ class CustomValueResult implements JsonSerializable
      *
      * @var string
      */
-    public $format;
+    public $format = '0';
 
     /**
      * Determines whether a value of 0 counts as "No Current Data".
