@@ -1,9 +1,17 @@
 {
     "name": "sk4t0/custom-value-metric",
-    "description": "A Laravel Nova card.",
+    "description": "A Laravel Value Metric improved with linked ranges and multiple values on the same card.",
+    "authors": [
+        {
+            "name": "Salvatore Nalbone",
+            "email": "info@salvatorenalbone.com"
+        }
+    ],
     "keywords": [
         "laravel",
-        "nova"
+        "nova",
+        "card",
+        "metric"
     ],
     "license": "MIT",
     "require": {

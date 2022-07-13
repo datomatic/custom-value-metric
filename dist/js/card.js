@@ -128,6 +128,89 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'BaseValueMetric',
@@ -139,44 +222,37 @@ __webpack_require__.r(__webpack_exports__);
     helpText: {},
     helpWidth: {},
     maxWidth: {},
-    previous: {},
-    value: {},
-    prefix: '',
-    rangeGroupClass: '',
-    suffix: '',
-    suffixInflection: {
-      "default": true
+    multi: {
+      "default": false
     },
+    metrics: {
+      type: Array,
+      "default": function _default() {
+        return [];
+      }
+    },
+    rangeGroupClass: '',
     selectedRangeKey: [String, Number],
     ranges: {
       type: Array,
       "default": function _default() {
         return [];
       }
-    },
-    format: {
-      type: String,
-      "default": '(0[.]00a)'
-    },
-    zeroResult: {
-      "default": false
     }
   },
   methods: {
     handleChange: function handleChange(event) {
       this.$emit('selected', event.target.value);
-    }
-  },
-  computed: {
-    growthPercentage: function growthPercentage() {
-      return Math.abs(this.increaseOrDecrease);
     },
-    increaseOrDecrease: function increaseOrDecrease() {
-      if (this.previous == 0 || this.previous == null) return 0;
-      return ((this.value - this.previous) / this.previous * 100).toFixed(2);
+    growthPercentage: function growthPercentage(metric) {
+      return Math.abs(this.increaseOrDecrease(metric));
     },
-    increaseOrDecreaseLabel: function increaseOrDecreaseLabel() {
-      switch (Math.sign(this.increaseOrDecrease)) {
+    increaseOrDecrease: function increaseOrDecrease(metric) {
+      if (metric.previous == 0 || metric.previous == null) return 0;
+      return ((metric.value - metric.previous) / metric.previous * 100).toFixed(2);
+    },
+    increaseOrDecreaseLabel: function increaseOrDecreaseLabel(metric) {
+      switch (Math.sign(this.increaseOrDecrease(metric))) {
         case 1:
           return 'Increase';
 
@@ -187,8 +263,8 @@ __webpack_require__.r(__webpack_exports__);
           return 'Decrease';
       }
     },
-    sign: function sign() {
-      switch (Math.sign(this.increaseOrDecrease)) {
+    sign: function sign(metric) {
+      switch (Math.sign(this.increaseOrDecrease(metric))) {
         case 1:
           return '+';
 
@@ -199,32 +275,32 @@ __webpack_require__.r(__webpack_exports__);
           return '-';
       }
     },
-    isNullValue: function isNullValue() {
-      return this.value == null;
+    isNullValue: function isNullValue(metric) {
+      return metric.value == null;
     },
-    isNullPreviousValue: function isNullPreviousValue() {
-      return this.previous == null;
+    isNullPreviousValue: function isNullPreviousValue(metric) {
+      return metric.previous == null;
     },
-    formattedValue: function formattedValue() {
-      if (!this.isNullValue) {
-        return this.prefix + Nova.formatNumber(new String(this.value), this.format);
+    formattedValue: function formattedValue(metric) {
+      if (!this.isNullValue(metric)) {
+        return metric.prefix + Nova.formatNumber(new String(metric.value), metric.format);
       }
 
       return '';
     },
-    formattedPreviousValue: function formattedPreviousValue() {
-      if (!this.isNullPreviousValue) {
-        return this.prefix + Nova.formatNumber(new String(this.previous), this.format);
+    formattedPreviousValue: function formattedPreviousValue(metric) {
+      if (!this.isNullPreviousValue(metric)) {
+        return metric.prefix + Nova.formatNumber(new String(metric.previous), metric.format);
       }
 
       return '';
     },
-    formattedSuffix: function formattedSuffix() {
-      if (this.suffixInflection === false) {
-        return this.suffix;
+    formattedSuffix: function formattedSuffix(metric) {
+      if (metric.suffixInflection === false) {
+        return metric.suffix;
       }
 
-      return (0,laravel_nova__WEBPACK_IMPORTED_MODULE_0__.SingularOrPlural)(this.value, this.suffix);
+      return (0,laravel_nova__WEBPACK_IMPORTED_MODULE_0__.SingularOrPlural)(metric.value, metric.suffix);
     }
   }
 });
@@ -246,11 +322,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var laravel_nova__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(laravel_nova__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Base_ValueMetric__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Base/ValueMetric */ "./resources/js/components/Base/ValueMetric.vue");
 /* harmony import */ var _MetricBehavior__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MetricBehavior */ "./resources/js/components/MetricBehavior.js");
-//
-//
-//
-//
-//
 //
 //
 //
@@ -296,15 +367,9 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       loading: true,
-      format: '(0[.]00a)',
-      value: 0,
-      previous: 0,
-      rangeGroupClass: '',
-      prefix: '',
-      suffix: '',
-      suffixInflection: true,
+      multi: false,
       selectedRangeKey: null,
-      zeroResult: false
+      metrics: {}
     };
   },
   watch: {
@@ -346,22 +411,12 @@ __webpack_require__.r(__webpack_exports__);
       this.loading = true;
       (0,laravel_nova__WEBPACK_IMPORTED_MODULE_0__.Minimum)(Nova.request().get(this.metricEndpoint, this.metricPayload)).then(function (_ref) {
         var _ref$data$value = _ref.data.value,
-            value = _ref$data$value.value,
-            previous = _ref$data$value.previous,
-            prefix = _ref$data$value.prefix,
+            multi = _ref$data$value.multi,
             rangeGroupClass = _ref$data$value.rangeGroupClass,
-            suffix = _ref$data$value.suffix,
-            suffixInflection = _ref$data$value.suffixInflection,
-            format = _ref$data$value.format,
-            zeroResult = _ref$data$value.zeroResult;
-        _this.value = value;
-        _this.format = format || _this.format;
-        _this.prefix = prefix || _this.prefix;
+            metrics = _ref$data$value.metrics;
+        _this.multi = multi || _this.multi;
         _this.rangeGroupClass = rangeGroupClass || _this.rangeGroupClass;
-        _this.suffix = suffix || _this.suffix;
-        _this.suffixInflection = suffixInflection;
-        _this.zeroResult = zeroResult || _this.zeroResult;
-        _this.previous = previous;
+        _this.metrics = metrics;
         _this.loading = false;
       });
     }
@@ -26935,7 +26990,11 @@ var render = function () {
   var _c = _vm._self._c || _h
   return _c(
     "loading-card",
-    { staticClass: "px-6 py-4", attrs: { loading: _vm.loading } },
+    {
+      staticClass: "px-6 py-4",
+      staticStyle: { height: "auto" },
+      attrs: { loading: _vm.loading },
+    },
     [
       _c("div", { staticClass: "flex mb-4" }, [
         _c("h3", { staticClass: "mr-3 text-base text-80 font-bold" }, [
@@ -27001,127 +27060,295 @@ var render = function () {
           : _vm._e(),
       ]),
       _vm._v(" "),
-      _c("p", { staticClass: "flex items-center text-4xl mb-4" }, [
-        _vm._v("\n    " + _vm._s(_vm.formattedValue) + "\n    "),
-        _vm.suffix
-          ? _c("span", { staticClass: "ml-2 text-sm font-bold text-80" }, [
-              _vm._v(_vm._s(_vm.formattedSuffix)),
-            ])
-          : _vm._e(),
-      ]),
-      _vm._v(" "),
-      _c("div", [
-        _c("p", { staticClass: "flex items-center text-80 font-bold" }, [
-          _vm.increaseOrDecreaseLabel == "Decrease"
-            ? _c(
-                "svg",
-                {
-                  staticClass: "text-danger stroke-current mr-2",
-                  attrs: {
-                    xmlns: "http://www.w3.org/2000/svg",
-                    width: "24",
-                    height: "24",
-                    fill: "none",
-                    viewBox: "0 0 24 24",
-                    stroke: "currentColor",
+      _vm._l(this.metrics, function (metric) {
+        return _c("div", [
+          _vm.multi
+            ? _c("div", [
+                _c(
+                  "p",
+                  {
+                    staticClass: "flex text-sm items-center text-80 font-bold",
+                    staticStyle: { "min-height": "24px" },
                   },
-                },
-                [
-                  _c("path", {
-                    attrs: {
-                      "stroke-linecap": "round",
-                      "stroke-linejoin": "round",
-                      "stroke-width": "2",
-                      d: "M13 17h8m0 0V9m0 8l-8-8-4 4-6-6",
-                    },
-                  }),
-                ]
-              )
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.increaseOrDecreaseLabel == "Increase"
-            ? _c(
-                "svg",
-                {
-                  staticClass: "text-success stroke-current mr-2",
-                  attrs: {
-                    width: "24",
-                    height: "24",
-                    fill: "none",
-                    viewBox: "0 0 24 24",
-                    stroke: "currentColor",
-                  },
-                },
-                [
-                  _c("path", {
-                    attrs: {
-                      "stroke-linecap": "round",
-                      "stroke-linejoin": "round",
-                      "stroke-width": "2",
-                      d: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
-                    },
-                  }),
-                ]
-              )
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.increaseOrDecrease != 0
-            ? _c("span", [
-                _vm.growthPercentage !== 0
-                  ? _c("span", [
-                      _vm._v(
-                        "\n          " +
-                          _vm._s(_vm.growthPercentage) +
-                          "%\n          " +
-                          _vm._s(_vm.__(_vm.increaseOrDecreaseLabel)) +
-                          "\n\n          "
-                      ),
-                      _c("span", [
-                        _vm._v(
-                          "\n            (" +
-                            _vm._s(_vm.formattedPreviousValue) +
-                            ")\n          "
-                        ),
-                      ]),
-                    ])
-                  : _c("span", [
-                      _vm._v(" " + _vm._s(_vm.__("No Increase")) + " "),
+                  [
+                    _c("span", { staticClass: "text-90" }, [
+                      _vm._v(_vm._s(metric.name) + ":"),
                     ]),
+                    _vm._v(
+                      "   " + _vm._s(_vm.formattedValue(metric)) + "\n        "
+                    ),
+                    metric.suffix
+                      ? _c(
+                          "span",
+                          { staticClass: "ml-2 text-sm font-bold text-80" },
+                          [_vm._v(_vm._s(_vm.formattedSuffix(metric)))]
+                        )
+                      : _vm._e(),
+                    _vm._v(",  \n          "),
+                    _vm.increaseOrDecreaseLabel(metric) == "Decrease"
+                      ? _c(
+                          "svg",
+                          {
+                            staticClass: "text-danger stroke-current mr-2",
+                            attrs: {
+                              xmlns: "http://www.w3.org/2000/svg",
+                              width: "24",
+                              height: "24",
+                              fill: "none",
+                              viewBox: "0 0 24 24",
+                              stroke: "currentColor",
+                            },
+                          },
+                          [
+                            _c("path", {
+                              attrs: {
+                                "stroke-linecap": "round",
+                                "stroke-linejoin": "round",
+                                "stroke-width": "2",
+                                d: "M13 17h8m0 0V9m0 8l-8-8-4 4-6-6",
+                              },
+                            }),
+                          ]
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.increaseOrDecreaseLabel(metric) == "Increase"
+                      ? _c(
+                          "svg",
+                          {
+                            staticClass: "text-success stroke-current mr-2",
+                            attrs: {
+                              width: "24",
+                              height: "24",
+                              fill: "none",
+                              viewBox: "0 0 24 24",
+                              stroke: "currentColor",
+                            },
+                          },
+                          [
+                            _c("path", {
+                              attrs: {
+                                "stroke-linecap": "round",
+                                "stroke-linejoin": "round",
+                                "stroke-width": "2",
+                                d: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+                              },
+                            }),
+                          ]
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.increaseOrDecrease(metric) != 0
+                      ? _c("span", [
+                          _vm.growthPercentage(metric) !== 0
+                            ? _c("span", [
+                                _vm._v(
+                                  "\n              " +
+                                    _vm._s(_vm.growthPercentage(metric)) +
+                                    "%\n\n              "
+                                ),
+                                _c("span", [
+                                  _vm._v(
+                                    "\n                (" +
+                                      _vm._s(
+                                        _vm.formattedPreviousValue(metric)
+                                      ) +
+                                      ")\n              "
+                                  ),
+                                ]),
+                              ])
+                            : _c("span", [
+                                _vm._v(
+                                  " " + _vm._s(_vm.__("No Increase")) + " "
+                                ),
+                              ]),
+                        ])
+                      : _c("span", [
+                          metric.previous == "0" && metric.value != "0"
+                            ? _c("span", [
+                                _vm._v(
+                                  "\n              " +
+                                    _vm._s(_vm.__("No Prior Data")) +
+                                    "\n            "
+                                ),
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          metric.value == "0" &&
+                          metric.previous != "0" &&
+                          !metric.zeroResult
+                            ? _c("span", [
+                                _vm._v(
+                                  "\n              " +
+                                    _vm._s(_vm.__("No Current Data")) +
+                                    "\n            "
+                                ),
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          metric.value == "0" &&
+                          metric.previous == "0" &&
+                          !metric.zeroResult
+                            ? _c("span", [
+                                _vm._v(
+                                  "\n              " +
+                                    _vm._s(_vm.__("No Data")) +
+                                    "\n            "
+                                ),
+                              ])
+                            : _vm._e(),
+                        ]),
+                  ]
+                ),
               ])
-            : _c("span", [
-                _vm.previous == "0" && _vm.value != "0"
-                  ? _c("span", [
-                      _vm._v(
-                        "\n          " +
-                          _vm._s(_vm.__("No Prior Data")) +
-                          "\n        "
-                      ),
-                    ])
-                  : _vm._e(),
+            : _c("div", [
+                _c("p", { staticClass: "flex items-center text-4xl mb-4" }, [
+                  _vm._v(
+                    "\n        " +
+                      _vm._s(_vm.formattedValue(metric)) +
+                      "\n        "
+                  ),
+                  metric.suffix
+                    ? _c(
+                        "span",
+                        { staticClass: "ml-2 text-sm font-bold text-80" },
+                        [_vm._v(_vm._s(_vm.formattedSuffix(metric)))]
+                      )
+                    : _vm._e(),
+                ]),
                 _vm._v(" "),
-                _vm.value == "0" && _vm.previous != "0" && !_vm.zeroResult
-                  ? _c("span", [
-                      _vm._v(
-                        "\n          " +
-                          _vm._s(_vm.__("No Current Data")) +
-                          "\n        "
-                      ),
-                    ])
-                  : _vm._e(),
-                _vm._v(" "),
-                _vm.value == "0" && _vm.previous == "0" && !_vm.zeroResult
-                  ? _c("span", [
-                      _vm._v(
-                        "\n          " +
-                          _vm._s(_vm.__("No Data")) +
-                          "\n        "
-                      ),
-                    ])
-                  : _vm._e(),
+                _c("div", [
+                  _c(
+                    "p",
+                    { staticClass: "flex items-center text-80 font-bold" },
+                    [
+                      _vm.increaseOrDecreaseLabel(metric) == "Decrease"
+                        ? _c(
+                            "svg",
+                            {
+                              staticClass: "text-danger stroke-current mr-2",
+                              attrs: {
+                                xmlns: "http://www.w3.org/2000/svg",
+                                width: "24",
+                                height: "24",
+                                fill: "none",
+                                viewBox: "0 0 24 24",
+                                stroke: "currentColor",
+                              },
+                            },
+                            [
+                              _c("path", {
+                                attrs: {
+                                  "stroke-linecap": "round",
+                                  "stroke-linejoin": "round",
+                                  "stroke-width": "2",
+                                  d: "M13 17h8m0 0V9m0 8l-8-8-4 4-6-6",
+                                },
+                              }),
+                            ]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.increaseOrDecreaseLabel(metric) == "Increase"
+                        ? _c(
+                            "svg",
+                            {
+                              staticClass: "text-success stroke-current mr-2",
+                              attrs: {
+                                width: "24",
+                                height: "24",
+                                fill: "none",
+                                viewBox: "0 0 24 24",
+                                stroke: "currentColor",
+                              },
+                            },
+                            [
+                              _c("path", {
+                                attrs: {
+                                  "stroke-linecap": "round",
+                                  "stroke-linejoin": "round",
+                                  "stroke-width": "2",
+                                  d: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+                                },
+                              }),
+                            ]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.increaseOrDecrease(metric) != 0
+                        ? _c("span", [
+                            _vm.growthPercentage(metric) !== 0
+                              ? _c("span", [
+                                  _vm._v(
+                                    "\n              " +
+                                      _vm._s(_vm.growthPercentage(metric)) +
+                                      "%\n              " +
+                                      _vm._s(
+                                        _vm.__(
+                                          _vm.increaseOrDecreaseLabel(metric)
+                                        )
+                                      ) +
+                                      "\n\n              "
+                                  ),
+                                  _c("span", [
+                                    _vm._v(
+                                      "\n                (" +
+                                        _vm._s(
+                                          _vm.formattedPreviousValue(metric)
+                                        ) +
+                                        ")\n              "
+                                    ),
+                                  ]),
+                                ])
+                              : _c("span", [
+                                  _vm._v(
+                                    " " + _vm._s(_vm.__("No Increase")) + " "
+                                  ),
+                                ]),
+                          ])
+                        : _c("span", [
+                            metric.previous == "0" && metric.value != "0"
+                              ? _c("span", [
+                                  _vm._v(
+                                    "\n              " +
+                                      _vm._s(_vm.__("No Prior Data")) +
+                                      "\n            "
+                                  ),
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            metric.value == "0" &&
+                            metric.previous != "0" &&
+                            !metric.zeroResult
+                              ? _c("span", [
+                                  _vm._v(
+                                    "\n              " +
+                                      _vm._s(_vm.__("No Current Data")) +
+                                      "\n            "
+                                  ),
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            metric.value == "0" &&
+                            metric.previous == "0" &&
+                            !metric.zeroResult
+                              ? _c("span", [
+                                  _vm._v(
+                                    "\n              " +
+                                      _vm._s(_vm.__("No Data")) +
+                                      "\n            "
+                                  ),
+                                ])
+                              : _vm._e(),
+                          ]),
+                    ]
+                  ),
+                ]),
               ]),
-        ]),
-      ]),
-    ]
+        ])
+      }),
+    ],
+    2
   )
 }
 var staticRenderFns = []
@@ -27152,17 +27379,12 @@ var render = function () {
       title: _vm.card.name,
       "help-text": _vm.card.helpText,
       "help-width": _vm.card.helpWidth,
-      previous: _vm.previous,
+      multi: _vm.multi,
       rangeGroupClass: _vm.rangeGroupClass,
-      value: _vm.value,
+      metrics: _vm.metrics,
       ranges: _vm.card.ranges,
-      format: _vm.format,
-      prefix: _vm.prefix,
-      suffix: _vm.suffix,
-      "suffix-inflection": _vm.suffixInflection,
       "selected-range-key": _vm.selectedRangeKey,
       loading: _vm.loading,
-      "zero-result": _vm.zeroResult,
     },
     on: { selected: _vm.handleRangeSelected },
   })

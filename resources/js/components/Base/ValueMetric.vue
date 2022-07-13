@@ -1,5 +1,5 @@
 <template>
-  <loading-card :loading="loading" class="px-6 py-4">
+  <loading-card :loading="loading" class="px-6 py-4" style="height: auto;">
     <div class="flex mb-4">
       <h3 class="mr-3 text-base text-80 font-bold">{{ title }}</h3>
 
@@ -38,77 +38,160 @@
       </select>
     </div>
 
-    <p class="flex items-center text-4xl mb-4">
-      {{ formattedValue }}
-      <span v-if="suffix" class="ml-2 text-sm font-bold text-80">{{
-        formattedSuffix
-      }}</span>
-    </p>
 
-    <div>
-      <p class="flex items-center text-80 font-bold">
-        <svg
-          v-if="increaseOrDecreaseLabel == 'Decrease'"
-          xmlns="http://www.w3.org/2000/svg"
-          class="text-danger stroke-current mr-2"
-          width="24"
-          height="24"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-          />
-        </svg>
-        <svg
-          v-if="increaseOrDecreaseLabel == 'Increase'"
-          class="text-success stroke-current mr-2"
-          width="24"
-          height="24"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-          />
-        </svg>
 
-        <span v-if="increaseOrDecrease != 0">
-          <span v-if="growthPercentage !== 0">
-            {{ growthPercentage }}%
-            {{ __(increaseOrDecreaseLabel) }}
+    <div v-for="metric in this.metrics">
 
-            <span>
-              ({{ formattedPreviousValue }})
+      <div v-if="multi">
+        <p class="flex text-sm items-center text-80 font-bold" style="min-height: 24px;">
+          <span class="text-90">{{ metric.name }}:</span> &nbsp; {{ formattedValue(metric) }}
+          <span v-if="metric.suffix" class="ml-2 text-sm font-bold text-80">{{
+            formattedSuffix(metric)
+          }}</span>, &nbsp;
+            <svg
+              v-if="increaseOrDecreaseLabel(metric) == 'Decrease'"
+              xmlns="http://www.w3.org/2000/svg"
+              class="text-danger stroke-current mr-2"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+              />
+            </svg>
+            <svg
+              v-if="increaseOrDecreaseLabel(metric) == 'Increase'"
+              class="text-success stroke-current mr-2"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              />
+            </svg>
+
+            <span v-if="increaseOrDecrease(metric) != 0">
+              <span v-if="growthPercentage(metric) !== 0">
+                {{ growthPercentage(metric) }}%
+
+                <span>
+                  ({{ formattedPreviousValue(metric) }})
+                </span>
+              </span>
+
+              <span v-else> {{ __('No Increase') }} </span>
             </span>
-          </span>
 
-          <span v-else> {{ __('No Increase') }} </span>
-        </span>
+            <span v-else>
+              <span v-if="metric.previous == '0' && metric.value != '0'">
+                {{ __('No Prior Data') }}
+              </span>
 
-        <span v-else>
-          <span v-if="previous == '0' && value != '0'">
-            {{ __('No Prior Data') }}
-          </span>
+              <span v-if="metric.value == '0' && metric.previous != '0' && !metric.zeroResult">
+                {{ __('No Current Data') }}
+              </span>
 
-          <span v-if="value == '0' && previous != '0' && !zeroResult">
-            {{ __('No Current Data') }}
-          </span>
+              <span v-if="metric.value == '0' && metric.previous == '0' && !metric.zeroResult">
+                {{ __('No Data') }}
+              </span>
+            </span>
+        </p>
+      </div>
 
-          <span v-if="value == '0' && previous == '0' && !zeroResult">
-            {{ __('No Data') }}
-          </span>
-        </span>
-      </p>
+      <div v-else>
+
+        <p class="flex items-center text-4xl mb-4">
+          {{ formattedValue(metric) }}
+          <span v-if="metric.suffix" class="ml-2 text-sm font-bold text-80">{{
+            formattedSuffix(metric)
+          }}</span>
+        </p>
+
+        <div>
+          <p class="flex items-center text-80 font-bold">
+            <svg
+              v-if="increaseOrDecreaseLabel(metric) == 'Decrease'"
+              xmlns="http://www.w3.org/2000/svg"
+              class="text-danger stroke-current mr-2"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+              />
+            </svg>
+            <svg
+              v-if="increaseOrDecreaseLabel(metric) == 'Increase'"
+              class="text-success stroke-current mr-2"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              />
+            </svg>
+
+            <span v-if="increaseOrDecrease(metric) != 0">
+              <span v-if="growthPercentage(metric) !== 0">
+                {{ growthPercentage(metric) }}%
+                {{ __(increaseOrDecreaseLabel(metric)) }}
+
+                <span>
+                  ({{ formattedPreviousValue(metric) }})
+                </span>
+              </span>
+
+              <span v-else> {{ __('No Increase') }} </span>
+            </span>
+
+            <span v-else>
+              <span v-if="metric.previous == '0' && metric.value != '0'">
+                {{ __('No Prior Data') }}
+              </span>
+
+              <span v-if="metric.value == '0' && metric.previous != '0' && !metric.zeroResult">
+                {{ __('No Current Data') }}
+              </span>
+
+              <span v-if="metric.value == '0' && metric.previous == '0' && !metric.zeroResult">
+                {{ __('No Data') }}
+              </span>
+            </span>
+          </p>
+        </div>
+
+      </div>
+
     </div>
+
+
+
+
+
   </loading-card>
 </template>
 
@@ -123,45 +206,33 @@ export default {
     helpText: {},
     helpWidth: {},
     maxWidth: {},
-    previous: {},
-    value: {},
-    prefix: '',
-    rangeGroupClass: '',
-    suffix: '',
-    suffixInflection: {
-      default: true,
+    multi: { default: false},
+    metrics: {
+      type: Array, default: () => []
     },
+    rangeGroupClass: '',
     selectedRangeKey: [String, Number],
     ranges: { type: Array, default: () => [] },
-    format: {
-      type: String,
-      default: '(0[.]00a)',
-    },
-    zeroResult: {
-      default: false,
-    },
   },
 
   methods: {
     handleChange(event) {
       this.$emit('selected', event.target.value)
     },
-  },
 
-  computed: {
-    growthPercentage() {
-      return Math.abs(this.increaseOrDecrease)
+    growthPercentage(metric) {
+      return Math.abs(this.increaseOrDecrease(metric))
     },
 
-    increaseOrDecrease() {
-      if (this.previous == 0 || this.previous == null)
+    increaseOrDecrease(metric) {
+      if (metric.previous == 0 || metric.previous == null)
         return 0
 
-      return (((this.value - this.previous) / this.previous) * 100).toFixed(2)
+      return (((metric.value - metric.previous) / metric.previous) * 100).toFixed(2)
     },
 
-    increaseOrDecreaseLabel() {
-      switch (Math.sign(this.increaseOrDecrease)) {
+    increaseOrDecreaseLabel(metric) {
+      switch (Math.sign(this.increaseOrDecrease(metric))) {
         case 1:
           return 'Increase'
         case 0:
@@ -171,8 +242,8 @@ export default {
       }
     },
 
-    sign() {
-      switch (Math.sign(this.increaseOrDecrease)) {
+    sign(metric) {
+      switch (Math.sign(this.increaseOrDecrease(metric))) {
         case 1:
           return '+'
         case 0:
@@ -182,40 +253,40 @@ export default {
       }
     },
 
-    isNullValue() {
-      return this.value == null
+    isNullValue(metric) {
+      return metric.value == null
     },
 
-    isNullPreviousValue() {
-      return this.previous == null
+    isNullPreviousValue(metric) {
+      return metric.previous == null
     },
 
-    formattedValue() {
-      if (!this.isNullValue) {
+    formattedValue(metric) {
+      if (!this.isNullValue(metric)) {
         return (
-          this.prefix + Nova.formatNumber(new String(this.value), this.format)
+          metric.prefix + Nova.formatNumber(new String(metric.value), metric.format)
         )
       }
 
       return ''
     },
 
-    formattedPreviousValue() {
-      if (!this.isNullPreviousValue) {
+    formattedPreviousValue(metric) {
+      if (!this.isNullPreviousValue(metric)) {
         return (
-          this.prefix + Nova.formatNumber(new String(this.previous), this.format)
+          metric.prefix + Nova.formatNumber(new String(metric.previous), metric.format)
         )
       }
 
       return ''
     },
 
-    formattedSuffix() {
-      if (this.suffixInflection === false) {
-        return this.suffix
+    formattedSuffix(metric) {
+      if (metric.suffixInflection === false) {
+        return metric.suffix
       }
 
-      return SingularOrPlural(this.value, this.suffix)
+      return SingularOrPlural(metric.value, metric.suffix)
     },
   },
 }

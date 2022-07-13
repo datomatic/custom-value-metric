@@ -4,17 +4,12 @@
     :title="card.name"
     :help-text="card.helpText"
     :help-width="card.helpWidth"
-    :previous="previous"
+    :multi="multi"
     :rangeGroupClass="rangeGroupClass"
-    :value="value"
+    :metrics="metrics"
     :ranges="card.ranges"
-    :format="format"
-    :prefix="prefix"
-    :suffix="suffix"
-    :suffix-inflection="suffixInflection"
     :selected-range-key="selectedRangeKey"
     :loading="loading"
-    :zero-result="zeroResult"
   />
 </template>
 
@@ -56,15 +51,9 @@ export default {
 
   data: () => ({
     loading: true,
-    format: '(0[.]00a)',
-    value: 0,
-    previous: 0,
-    rangeGroupClass: '',
-    prefix: '',
-    suffix: '',
-    suffixInflection: true,
+    multi: false,
     selectedRangeKey: null,
-    zeroResult: false,
+    metrics: {},
   }),
 
   watch: {
@@ -108,25 +97,15 @@ export default {
         ({
           data: {
             value: {
-              value,
-              previous,
-              prefix,
+              multi,
               rangeGroupClass,
-              suffix,
-              suffixInflection,
-              format,
-              zeroResult,
+              metrics,
             },
           },
         }) => {
-          this.value = value
-          this.format = format || this.format
-          this.prefix = prefix || this.prefix
+          this.multi = multi || this.multi
           this.rangeGroupClass = rangeGroupClass || this.rangeGroupClass
-          this.suffix = suffix || this.suffix
-          this.suffixInflection = suffixInflection
-          this.zeroResult = zeroResult || this.zeroResult
-          this.previous = previous
+          this.metrics = metrics
           this.loading = false
         }
       )

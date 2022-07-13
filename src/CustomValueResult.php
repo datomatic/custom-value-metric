@@ -28,18 +28,11 @@ class CustomValueResult implements JsonSerializable
     public $previousLabel;
 
     /**
-     * The custom class to group the metrics with linked ranges.
-     *
-     * @var string
-     */
-    public $rangeGroupClass;
-
-    /**
      * The metric value prefix.
      *
      * @var string
      */
-    public $prefix;
+    public $prefix = '';
 
     /**
      * The metric value suffix.
@@ -75,10 +68,15 @@ class CustomValueResult implements JsonSerializable
      * @param  mixed  $value
      * @return void
      */
-    public function __construct($value, $classGroup)
+    public function __construct($value, $name, $metric)
     {
         $this->value = $value;
-        $this->rangeGroupClass = 'range-group-'.$classGroup;
+        $this->name = $name;
+        isset($metric['prefix']) ? $this->prefix = $metric['prefix'] : null;
+        isset($metric['suffix']) ? $this->suffix = $metric['suffix'] : null;
+        isset($metric['suffixInflection']) ? $this->suffixInflection = $metric['suffixInflection'] : null;
+        isset($metric['format']) ? $this->format = $metric['format'] : null;
+        isset($metric['zeroResult']) ? $this->zeroResult = $metric['zeroResult'] : null;
     }
 
     /**
@@ -192,9 +190,9 @@ class CustomValueResult implements JsonSerializable
     {
         return [
             'value' => $this->value,
+            'name' => $this->name,
             'previous' => $this->previous,
             'previousLabel' => $this->previousLabel,
-            'rangeGroupClass' => $this->rangeGroupClass,
             'prefix' => $this->prefix,
             'suffix' => $this->suffix,
             'suffixInflection' => $this->suffixInflection,
