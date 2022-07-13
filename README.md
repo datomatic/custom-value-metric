@@ -10,7 +10,7 @@ A custom value metric for Nova. It brings new functionalities to the usual Value
 PHP 8.1+ is required, as well as Nova 3+.
 
 ```sh
-composer require datomatic/enum-helper
+composer require sk4t0/custom-value-metric
 ```
 ## Usage
 To use it you need to extend the `CustomValueMetric` class on your metric class, instead of the usual `Value` one. Than you can write your `calculate`, `ranges` etc... methods as you would do in a normal Value Metric.
