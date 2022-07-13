@@ -206,8 +206,8 @@ class UserMetrics extends CustomValueMetric
      */
     public function calculate(Request $request)
     {
-        $metrics = $this->addMetric('New Users', User::class, 'count')->suffix(' users')->format('0')
-        	->addMetric('Average age', User::class, 'average', 'age')->format('0');
+        $metrics = $this->addMetric('New Users', User::class, 'count')->suffix(' users')
+        	->addMetric('Average age', User::class, 'average', 'age')->suffix(' years')->format('0');
         return $metrics->multiAggregate($request);
     }
 
