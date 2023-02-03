@@ -1,6 +1,6 @@
 <?php
 
-namespace Sk4t0\CustomValueMetric;
+namespace Datomatic\CustomValueMetric;
 
 use JsonSerializable;
 
@@ -30,11 +30,6 @@ class MultiValueResult implements JsonSerializable
     {
         $this->serializables[$result->name] = $result;
         $this->lastResult = $result->name;
-    }
-
-    public function count()
-    {
-        return count($this->serializables);
     }
 
     /**
@@ -134,6 +129,7 @@ class MultiValueResult implements JsonSerializable
         foreach ($this->serializables as $key => $serializable) {
             $this->results['metrics'][] = $serializable->jsonSerialize();
         }
+
         return $this->results;
     }
 }

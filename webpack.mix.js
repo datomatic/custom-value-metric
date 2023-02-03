@@ -1,12 +1,12 @@
 let mix = require('laravel-mix')
+const path = require('path')
+
+require('./nova.mix')
+
 
 mix
-  .setPublicPath('dist')
-  .js('resources/js/card.js', 'js')
-  .vue({ version: 2 })
-  .sass('resources/sass/card.scss', 'css')
-  .webpackConfig({
-    externals: {
-      Vue: 'vue',
-    },
-  })
+    .setPublicPath('dist')
+    .js('resources/js/card.js', 'js')
+    .vue({ version: 3 })
+    .css('resources/css/card.css', 'css')
+    .nova('datomatic/custom-value-metric');

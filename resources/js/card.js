@@ -1,3 +1,5 @@
-Nova.booting((Vue, router, store) => {
-  Vue.component('custom-value-metric', require('./components/Card').default)
+import CustomValueMetric from './components/CustomValueMetric';
+
+Nova.booting(Vue => {
+    Vue.component('custom-value-metric', CustomValueMetric);
 })

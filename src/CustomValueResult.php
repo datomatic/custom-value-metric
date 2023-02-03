@@ -1,6 +1,6 @@
 <?php
 
-namespace Sk4t0\CustomValueMetric;
+namespace Datomatic\CustomValueMetric;
 
 use JsonSerializable;
 
@@ -56,6 +56,13 @@ class CustomValueResult implements JsonSerializable
     public $format = '0';
 
     /**
+     * The metric span.
+     *
+     * @var string|int
+     */
+    public $span = 1;
+
+    /**
      * Determines whether a value of 0 counts as "No Current Data".
      *
      * @var bool
@@ -76,6 +83,7 @@ class CustomValueResult implements JsonSerializable
         isset($metric['suffix']) ? $this->suffix = $metric['suffix'] : null;
         isset($metric['suffixInflection']) ? $this->suffixInflection = $metric['suffixInflection'] : null;
         isset($metric['format']) ? $this->format = $metric['format'] : null;
+        isset($metric['span']) ? $this->span = $metric['span'] : null;
         isset($metric['zeroResult']) ? $this->zeroResult = $metric['zeroResult'] : null;
     }
 
@@ -168,6 +176,19 @@ class CustomValueResult implements JsonSerializable
     }
 
     /**
+     * Set the metric span.
+     *
+     * @param  string|int  $span
+     * @return $this
+     */
+    public function span($span)
+    {
+        $this->span = $span;
+
+        return $this;
+    }
+
+    /**
      * Sets the zeroResult value.
      *
      * @param  bool  $zeroResult
@@ -197,6 +218,7 @@ class CustomValueResult implements JsonSerializable
             'suffix' => $this->suffix,
             'suffixInflection' => $this->suffixInflection,
             'format' => $this->format,
+            'span' => $this->span,
             'zeroResult' => $this->zeroResult,
         ];
     }

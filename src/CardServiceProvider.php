@@ -1,6 +1,6 @@
 <?php
 
-namespace Sk4t0\CustomValueMetric;
+namespace Datomatic\CustomValueMetric;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;

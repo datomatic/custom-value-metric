@@ -10,7 +10,7 @@ export default {
     }
   },
 
-  destroyed() {
+  beforeUnmount() {
     Nova.$off('metric-refresh', this.fetch)
     Nova.$off('resources-deleted', this.fetch)
     Nova.$off('resources-restored', this.fetch)

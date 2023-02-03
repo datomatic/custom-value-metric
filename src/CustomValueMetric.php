@@ -1,12 +1,12 @@
 <?php
 
-namespace Sk4t0\CustomValueMetric;
+namespace Datomatic\CustomValueMetric;
 
-use Laravel\Nova\Nova;
-use Laravel\Nova\Metrics\Value;
 use Illuminate\Database\Eloquent\Builder;
-use Sk4t0\CustomValueMetric\MultiValueResult;
-use Sk4t0\CustomValueMetric\CustomValueResult;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Http\Request;
+use Laravel\Nova\Metrics\Value;
+use Laravel\Nova\Nova;
 
 class CustomValueMetric extends Value
 {
@@ -16,11 +16,12 @@ class CustomValueMetric extends Value
 
     public string $classGroup = 'default';
 
-    public $metrics = [];
+    public array $metrics = [];
 
-    public $lastMetric = '';
+    public string $lastMetric = '';
 
-    public $results = [];
+    public array $results = [];
+
     /**
      * The width of the card (1/3, 1/2, or full).
      *
@@ -33,7 +34,7 @@ class CustomValueMetric extends Value
      *
      * @return string
      */
-    public function component()
+    public function component(): string
     {
         return 'custom-value-metric';
     }
@@ -41,85 +42,90 @@ class CustomValueMetric extends Value
     /**
      * Return a value result showing the growth of an count aggregate over time.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder|string  $model
-     * @param  \Illuminate\Database\Query\Expression|string|null  $column
+     * @param  Request  $request
+     * @param  Builder|string  $model
+     * @param  Expression|string|null  $column
      * @param  string|null  $dateColumn
-     * @return \Laravel\Nova\Metrics\ValueResult
+     * @return MultiValueResult
      */
-    public function count($request, $model, $column = null, $dateColumn = null)
+    public function count($request, $model, $column = null, $dateColumn = null): MultiValueResult
     {
         $this->addMetric($this->name(), $model, 'count', $column, $dateColumn);
+
         return $this->multiAggregate($request);
     }
 
     /**
      * Return a value result showing the growth of an average aggregate over time.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder|string  $model
-     * @param  \Illuminate\Database\Query\Expression|string  $column
+     * @param  Request  $request
+     * @param  Builder|string  $model
+     * @param  Expression|string  $column
      * @param  string|null  $dateColumn
-     * @return \Laravel\Nova\Metrics\ValueResult
+     * @return MultiValueResult
      */
-    public function average($request, $model, $column, $dateColumn = null)
+    public function average($request, $model, $column, $dateColumn = null): MultiValueResult
     {
         $this->addMetric($this->name(), $model, 'average', $column, $dateColumn);
+
         return $this->multiAggregate($request);
     }
 
     /**
      * Return a value result showing the growth of a sum aggregate over time.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder|string  $model
-     * @param  \Illuminate\Database\Query\Expression|string  $column
+     * @param  Request  $request
+     * @param  Builder|string  $model
+     * @param  Expression|string  $column
      * @param  string|null  $dateColumn
-     * @return \Laravel\Nova\Metrics\ValueResult
+     * @return MultiValueResult
      */
-    public function sum($request, $model, $column, $dateColumn = null)
+    public function sum($request, $model, $column, $dateColumn = null): MultiValueResult
     {
         $this->addMetric($this->name(), $model, 'sum', $column, $dateColumn);
+
         return $this->multiAggregate($request);
     }
 
     /**
      * Return a value result showing the growth of a maximum aggregate over time.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder|string  $model
-     * @param  \Illuminate\Database\Query\Expression|string  $column
+     * @param  Request  $request
+     * @param  Builder|string  $model
+     * @param  Expression|string  $column
      * @param  string|null  $dateColumn
-     * @return \Laravel\Nova\Metrics\ValueResult
+     * @return MultiValueResult
      */
-    public function max($request, $model, $column, $dateColumn = null)
+    public function max($request, $model, $column, $dateColumn = null): MultiValueResult
     {
         $this->addMetric($this->name(), $model, 'max', $column, $dateColumn);
+
         return $this->multiAggregate($request);
     }
 
     /**
      * Return a value result showing the growth of a minimum aggregate over time.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder|string  $model
-     * @param  \Illuminate\Database\Query\Expression|string  $column
+     * @param  Request  $request
+     * @param  Builder|string  $model
+     * @param  Expression|string  $column
      * @param  string|null  $dateColumn
-     * @return \Laravel\Nova\Metrics\ValueResult
+     * @return MultiValueResult
      */
-    public function min($request, $model, $column, $dateColumn = null)
+    public function min($request, $model, $column, $dateColumn = null): MultiValueResult
     {
         $this->addMetric($this->name(), $model, 'min', $column, $dateColumn);
+
         return $this->multiAggregate($request);
     }
 
     /**
      * Return a value result showing the growth of a model over a given time frame.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return MultiValueResult
      */
-    public function multiAggregate($request)
+    public function multiAggregate(Request $request): MultiValueResult
     {
         $results = new MultiValueResult($this->multi, $this->grouped, $this->classGroup);
         foreach ($this->metrics as $name => $metric) {
@@ -129,11 +135,12 @@ class CustomValueMetric extends Value
 
             if ($request->range === 'ALL') {
                 $result = $this->multiResult(
-                    round(with(clone $query)->{$metric['function']}($column), $this->precision),
+                    round(with(clone $query)->{$metric['function']}($column), $this->roundingPrecision),
                     $name,
                     $metric
                 );
                 $results->addResult($result);
+
                 continue;
             }
 
@@ -144,7 +151,7 @@ class CustomValueMetric extends Value
                 array_map(function ($datetime) {
                     return $this->asQueryDatetime($datetime);
                 }, $this->previousRange($request->range, $timezone))
-            )->{$metric['function']}($column) ?? 0, $this->precision);
+            )->{$metric['function']}($column) ?? 0, $this->roundingPrecision);
 
             $result = $this->multiResult(
                 round(with(clone $query)->whereBetween(
@@ -152,26 +159,29 @@ class CustomValueMetric extends Value
                     array_map(function ($datetime) {
                         return $this->asQueryDatetime($datetime);
                     }, $this->currentRange($request->range, $timezone))
-                )->{$metric['function']}($column) ?? 0, $this->precision),
+                )->{$metric['function']}($column) ?? 0, $this->roundingPrecision),
                 $name,
                 $metric
             )->previous($previousValue);
             $results->addResult($result);
         }
+
         return $results;
     }
 
     /**
-    * @param string $name 
-    * @param  \Illuminate\Database\Eloquent\Builder|string  $model
-    * @param  string  $function
-    * @param  \Illuminate\Database\Query\Expression|string|null  $column
-    * @param  string|null  $dateColumn
-    */
-    public function addMetric($name, $model, $function, $column = null, $dateColumn = null)
+     * @param  string  $name
+     * @param  Builder|string  $model
+     * @param  string  $function
+     * @param  null  $column
+     * @param  null  $dateColumn
+     * @return CustomValueMetric
+     */
+    public function addMetric(string $name, $model, $function, $column = null, $dateColumn = null): static
     {
         $this->metrics[$name] = ['model' => $model, 'function' => $function, 'column' => $column, 'dateColumn' => $dateColumn];
         $this->lastMetric = $name;
+
         return $this;
     }
 
@@ -179,9 +189,11 @@ class CustomValueMetric extends Value
      * Create a new value metric result.
      *
      * @param  mixed  $value
+     * @param $name
+     * @param $metric
      * @return CustomValueResult
      */
-    public function multiResult($value, $name, $metric)
+    public function multiResult($value, $name, $metric): CustomValueResult
     {
         return new CustomValueResult($value, $name, $metric);
     }
@@ -192,7 +204,7 @@ class CustomValueMetric extends Value
      * @param  string  $symbol
      * @return $this
      */
-    public function dollars($symbol = '$')
+    public function dollars(string $symbol = '$'): static
     {
         return $this->currency($symbol);
     }
@@ -203,7 +215,7 @@ class CustomValueMetric extends Value
      * @param  string  $symbol
      * @return $this
      */
-    public function currency($symbol = '$')
+    public function currency(string $symbol = '$'): static
     {
         return $this->prefix($symbol);
     }
@@ -214,7 +226,7 @@ class CustomValueMetric extends Value
      * @param  string  $prefix
      * @return $this
      */
-    public function prefix($prefix)
+    public function prefix($prefix): static
     {
         $this->metrics[$this->lastMetric]['prefix'] = $prefix;
 
@@ -227,7 +239,7 @@ class CustomValueMetric extends Value
      * @param  string  $suffix
      * @return $this
      */
-    public function suffix($suffix)
+    public function suffix($suffix): static
     {
         $this->metrics[$this->lastMetric]['suffix'] = $suffix;
 
@@ -255,6 +267,19 @@ class CustomValueMetric extends Value
     public function format($format)
     {
         $this->metrics[$this->lastMetric]['format'] = $format;
+
+        return $this;
+    }
+
+    /**
+     * Set the metric span.
+     *
+     * @param  int|string  $span
+     * @return $this
+     */
+    public function span(int|string $span): static
+    {
+        $this->metrics[$this->lastMetric]['span'] = $span;
 
         return $this;
     }
