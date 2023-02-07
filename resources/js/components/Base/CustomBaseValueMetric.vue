@@ -33,7 +33,7 @@
                     {{ increaseOrDecrease(metric) < 0 ? '-' : '+' }}{{ Math.round(growthPercentage(metric)) }}%
                 </span>
                 <span class="text-xs text-gray-400 whitespace-nowrap">
-                  ({{ formattedValue(metric) }})
+                  ({{ formattedPreviousValue(metric) }})
                 </span>
               </span>
 
@@ -106,7 +106,7 @@
                 {{ __(increaseOrDecreaseLabel(metric)) }}
 
                 <span>
-                  ({{ formattedValue(metric) }})
+                  ({{ formattedPreviousValue(metric) }})
                 </span>
               </span>
 
@@ -230,6 +230,17 @@ export default {
             }
 
             return ''
+        },
+
+
+        formattedPreviousValue(metric) {
+          if (!this.isNullValue(metric)) {
+            return (
+                metric.prefix + Nova.formatNumber(new String(metric.previous), metric.format)
+            )
+          }
+
+          return ''
         },
 
         tooltipFormattedValue(metric) {
