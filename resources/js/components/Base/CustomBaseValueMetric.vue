@@ -15,7 +15,7 @@
                 :aria-label="__('Select Ranges')"
             />
         </div>
-        <div class="grid grid-cols-2 gap text-xs">
+        <div class="cvm-grid cvm-grid-cols-2 gap text-xs">
             <div class="p-1" v-for="metric in this.metrics" :class="spanClass(metric)">
                 <div v-if="multi">
                     <div class="text-70 font-bold uppercase mt-2 mb-1">{{ metric.name }}</div>
@@ -254,7 +254,7 @@ export default {
             return ''
         },
         spanClass(metric) {
-            return metric.span ? 'col-span-' + metric.span : '';
+            return metric.span ? 'cvm-col-span-' + metric.span : '';
         },
 
         formattedSuffix(metric) {

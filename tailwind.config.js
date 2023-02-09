@@ -8,6 +8,14 @@ module.exports = {
     ],
     darkMode: 'class',
     prefix: 'cvm-',
-    important: true,
     plugins: [],
+
+    safelist: [
+        'cvm-col-span-1',
+        'cvm-col-span-2',
+        'cvm-col-span-3',
+        'cvm-col-span-4',
+        'cvm-col-span-5',
+        'cvm-col-span-6'
+    ]
 };
