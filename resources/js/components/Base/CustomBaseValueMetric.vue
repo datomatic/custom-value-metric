@@ -29,10 +29,10 @@
 
             <span v-if="increaseOrDecrease(metric) != 0">
               <span v-if="growthPercentage(metric) !== 0">
-                <span class="text-base" :class="increaseOrDecrease(metric) < 0 ? 'text-red-700' : 'text-green-700'">
+                <span class="text-base" :class="increaseOrDecrease(metric) < 0 ? 'cvm-text-red-700' : 'cvm-text-green-700'">
                     {{ increaseOrDecrease(metric) < 0 ? '-' : '+' }}{{ Math.round(growthPercentage(metric)) }}%
                 </span>
-                <span class="text-xs text-gray-400 whitespace-nowrap">
+                <span class="text-xs cvm-text-gray-400 whitespace-nowrap">
                   ({{ formattedPreviousValue(metric) }})
                 </span>
               </span>
@@ -69,7 +69,7 @@
                             <svg
                                 v-if="increaseOrDecreaseLabel(metric) == 'Decrease'"
                                 xmlns="http://www.w3.org/2000/svg"
-                                class="cvm-text-red-500 stroke-current mr-2"
+                                class="cvm-text-red-700 stroke-current mr-2"
                                 width="24"
                                 height="24"
                                 fill="none"
@@ -85,7 +85,7 @@
                             </svg>
                             <svg
                                 v-if="increaseOrDecreaseLabel(metric) == 'Increase'"
-                                class="cvm-text-green-500 stroke-current mr-2"
+                                class="cvm-text-green-700 stroke-current mr-2"
                                 width="24"
                                 height="24"
                                 fill="none"
