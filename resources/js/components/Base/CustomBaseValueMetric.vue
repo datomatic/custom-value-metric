@@ -69,7 +69,7 @@
                             <svg
                                 v-if="increaseOrDecreaseLabel(metric) == 'Decrease'"
                                 xmlns="http://www.w3.org/2000/svg"
-                                class="text-danger stroke-current mr-2"
+                                class="cvm-text-red-500 stroke-current mr-2"
                                 width="24"
                                 height="24"
                                 fill="none"
@@ -85,7 +85,7 @@
                             </svg>
                             <svg
                                 v-if="increaseOrDecreaseLabel(metric) == 'Increase'"
-                                class="text-success stroke-current mr-2"
+                                class="cvm-text-green-500 stroke-current mr-2"
                                 width="24"
                                 height="24"
                                 fill="none"

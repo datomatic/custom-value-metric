@@ -7,14 +7,15 @@
     "watch-poll": "mix watch -- --watch-options-poll=1000",
     "hot": "mix watch --hot",
     "prod": "npm run production",
-    "production": "mix --production",
-    "nova:install": "npm --prefix='../../vendor/laravel/nova' ci"
+    "production": "mix --production"
   },
   "devDependencies": {
+    "postcss": "^8.4.5",
+    "postcss-import": "^14.0.2",
     "@vue/compiler-sfc": "^3.2.22",
     "laravel-mix": "^6.0.41",
-    "postcss": "^8.3.11",
-    "vue-loader": "^16.8.3"
+    "vue-loader": "^16.8.3",
+    "tailwindcss": "^3.2.6"
   },
   "dependencies": {
     "@inertiajs/inertia": "^0.11.1",
