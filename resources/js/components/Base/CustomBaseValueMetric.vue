@@ -189,7 +189,7 @@ export default {
         },
 
         increaseOrDecrease(metric) {
-            if (metric.previous == 0 || metric.previous == null || metric.value == 0)
+            if (metric.previous == 0 || metric.previous == null)
                 return 0
 
             return (((metric.value - metric.previous) / metric.previous) * 100).toFixed(2)
