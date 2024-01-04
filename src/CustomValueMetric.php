@@ -173,11 +173,11 @@ class CustomValueMetric extends Value
      * @param  string  $name
      * @param  Builder|string  $model
      * @param  string  $function
-     * @param  null  $column
-     * @param  null  $dateColumn
+     * @param  Expression|string|null $column
+     * @param  Expression|string|null  $dateColumn
      * @return CustomValueMetric
      */
-    public function addMetric(string $name, $model, $function, $column = null, $dateColumn = null): static
+    public function addMetric(string $name, $model, $function, Expression|string|null $column = null, Expression|string|null $dateColumn = null): static
     {
         $this->metrics[$name] = ['model' => $model, 'function' => $function, 'column' => $column, 'dateColumn' => $dateColumn];
         $this->lastMetric = $name;
