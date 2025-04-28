@@ -4,8 +4,11 @@ namespace Datomatic\CustomValueMetric;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Database\Query\Expression;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
+use Laravel\Nova\Metrics\ValueResult;
 use Laravel\Nova\Nova;
 
 class CustomValueMetric extends Value
@@ -48,7 +51,7 @@ class CustomValueMetric extends Value
      * @param  string|null  $dateColumn
      * @return MultiValueResult
      */
-    public function count($request, $model, $column = null, $dateColumn = null): MultiValueResult
+    public function multiCount(NovaRequest $request, \Illuminate\Contracts\Database\Eloquent\Builder|Model|string $model, Expression|string|null $column = null, ?string $dateColumn = null): MultiValueResult
     {
         $this->addMetric($this->name(), $model, 'count', $column, $dateColumn);
 
@@ -64,7 +67,7 @@ class CustomValueMetric extends Value
      * @param  string|null  $dateColumn
      * @return MultiValueResult
      */
-    public function average($request, $model, $column, $dateColumn = null): MultiValueResult
+    public function multiAaverage(NovaRequest $request, \Illuminate\Contracts\Database\Eloquent\Builder|Model|string $model, Expression|string $column, ?string $dateColumn = null): MultiValueResult
     {
         $this->addMetric($this->name(), $model, 'average', $column, $dateColumn);
 
@@ -80,7 +83,7 @@ class CustomValueMetric extends Value
      * @param  string|null  $dateColumn
      * @return MultiValueResult
      */
-    public function sum($request, $model, $column, $dateColumn = null): MultiValueResult
+    public function multiSum(NovaRequest $request, \Illuminate\Contracts\Database\Eloquent\Builder|Model|string $model, Expression|string $column, ?string $dateColumn = null): MultiValueResult
     {
         $this->addMetric($this->name(), $model, 'sum', $column, $dateColumn);
 
@@ -96,7 +99,7 @@ class CustomValueMetric extends Value
      * @param  string|null  $dateColumn
      * @return MultiValueResult
      */
-    public function max($request, $model, $column, $dateColumn = null): MultiValueResult
+    public function multiMax(NovaRequest $request, \Illuminate\Contracts\Database\Eloquent\Builder|Model|string $model, Expression|string $column, ?string $dateColumn = null): MultiValueResult
     {
         $this->addMetric($this->name(), $model, 'max', $column, $dateColumn);
 
@@ -112,7 +115,7 @@ class CustomValueMetric extends Value
      * @param  string|null  $dateColumn
      * @return MultiValueResult
      */
-    public function min($request, $model, $column, $dateColumn = null): MultiValueResult
+    public function multiMin(ovaRequest $request, \Illuminate\Contracts\Database\Eloquent\Builder|Model|string $model, Expression|string $column, ?string $dateColumn = null): MultiValueResult
     {
         $this->addMetric($this->name(), $model, 'min', $column, $dateColumn);
 

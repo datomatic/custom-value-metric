@@ -3,43 +3,47 @@
 namespace Datomatic\CustomValueMetric;
 
 use JsonSerializable;
+use Stringable;
+use Laravel\Nova\Metrics\TransformsResults;
 
 class CustomValueResult implements JsonSerializable
 {
+    use TransformsResults;
+
     /**
      * The value of the result.
      *
-     * @var mixed
+     * @var int|float|numeric-string|null
      */
     public $value;
 
     /**
      * The previous value.
      *
-     * @var mixed
+     * @var int|float|numeric-string|null
      */
     public $previous;
 
     /**
      * The previous value label.
      *
-     * @var string
+     * @var \Stringable|string
      */
-    public $previousLabel = '';
+    public $previousLabel;
 
     /**
      * The metric value prefix.
      *
-     * @var string
+     * @var \Stringable|string
      */
-    public $prefix = '';
+    public $prefix;
 
     /**
      * The metric value suffix.
      *
-     * @var string
+     * @var \Stringable|string
      */
-    public $suffix = '';
+    public $suffix;
 
     /**
      * Whether to run inflection on the suffix.
@@ -56,18 +60,25 @@ class CustomValueResult implements JsonSerializable
     public $format = '0';
 
     /**
-     * The metric span.
-     *
-     * @var string|int
-     */
-    public $span = 1;
-
-    /**
      * Determines whether a value of 0 counts as "No Current Data".
      *
      * @var bool
      */
     public $zeroResult = false;
+
+    /**
+     * Indicates if the metric value is copyable inside Nova.
+     *
+     * @var bool
+     */
+    public $copyable = false;
+
+    /**
+     * The metric tooltip value formatting.
+     *
+     * @var string
+     */
+    public $tooltipFormat = '0';
 
     /**
      * Create a new value result instance.
@@ -79,12 +90,12 @@ class CustomValueResult implements JsonSerializable
     {
         $this->value = $value;
         $this->name = $name;
-        isset($metric['prefix']) ? $this->prefix = $metric['prefix'] : null;
-        isset($metric['suffix']) ? $this->suffix = $metric['suffix'] : null;
-        isset($metric['suffixInflection']) ? $this->suffixInflection = $metric['suffixInflection'] : null;
-        isset($metric['format']) ? $this->format = $metric['format'] : null;
-        isset($metric['span']) ? $this->span = $metric['span'] : null;
-        isset($metric['zeroResult']) ? $this->zeroResult = $metric['zeroResult'] : null;
+        $this->prefix = $metric['prefix'] ?? null;
+        $this->suffix = $metric['suffix'] ?? null;
+        $this->suffixInflection = $metric['suffixInflection'] ?? null;
+        $this->format = $metric['format'] ?? null;
+        $this->span = $metric['span'] ?? null;
+        $this->zeroResult = $metric['zeroResult'] ?? null;
     }
 
     /**
@@ -202,6 +213,18 @@ class CustomValueResult implements JsonSerializable
     }
 
     /**
+     * Allow the metric value to be copyable to the clipboard inside Nova.
+     *
+     * @return $this
+     */
+    public function copyable()
+    {
+        $this->copyable = true;
+
+        return $this;
+    }
+
+    /**
      * Prepare the metric result for JSON serialization.
      *
      * @return array
@@ -210,15 +233,18 @@ class CustomValueResult implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'value' => $this->value,
             'name' => $this->name,
-            'previous' => $this->previous,
-            'previousLabel' => $this->previousLabel,
+            'span' => $this->span,
+
+            'copyable' => $this->copyable,
+            'format' => $this->format,
             'prefix' => $this->prefix,
+            'previous' =>  $this->resolveTransformedValue($this->previous),
+            'previousLabel' => $this->previousLabel,
             'suffix' => $this->suffix,
             'suffixInflection' => $this->suffixInflection,
-            'format' => $this->format,
-            'span' => $this->span,
+            'tooltipFormat' => $this->tooltipFormat,
+            'value' => $this->resolveTransformedValue($this->value),
             'zeroResult' => $this->zeroResult,
         ];
     }
